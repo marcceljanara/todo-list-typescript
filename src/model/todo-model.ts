@@ -21,6 +21,10 @@ export type UpdateTodoRequest = {
     status?: boolean, 
 }
 
+export type GetTodoRequest = {
+    id: number,
+}
+
 export function toTodoResponse(todo: Todo): TodoResponse {
     return {
         id: todo.id,

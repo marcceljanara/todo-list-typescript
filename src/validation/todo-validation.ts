@@ -6,4 +6,8 @@ export class TodoValidation {
         description: z.string().optional(),
         status: z.boolean().optional(),
     });
+
+    static readonly GET: ZodType = z.object({
+        id: z.number().min(1).positive(),
+     });
 }

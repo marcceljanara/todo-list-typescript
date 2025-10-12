@@ -1,5 +1,6 @@
 import { prismaClient } from "../application/database";
-import { CreateTodoRequest, TodoResponse, toTodoResponse } from "../model/todo-model";
+import { ResponseError } from "../error/response-error";
+import { CreateTodoRequest, GetTodoRequest, TodoResponse, toTodoResponse } from "../model/todo-model";
 import { TodoValidation } from "../validation/todo-validation";
 import { Validation } from "../validation/validation";
 
@@ -17,5 +18,20 @@ export class TodoService {
     static async getAll(): Promise<TodoResponse[]> {
         const todos = await prismaClient.todo.findMany();
         return todos.map(toTodoResponse);
+    }
+
+    static async getById(request: GetTodoRequest): Promise<TodoResponse> {
+        const getRequest = Validation.validate(TodoValidation.GET, request )
+        const todo = await prismaClient.todo.findFirst({
+            where: {
+                id: request.id,
+            }
+        })
+
+        if (!todo) {
+            throw new ResponseError(404, 'Todo not found');
+        }
+
+        return toTodoResponse(todo);
     }
 }

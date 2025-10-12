@@ -80,3 +80,49 @@ describe('GET /api/todos', () => {
         expect(response.body.data.length).toBe(2);
     })
 });
+
+describe('GET /api/todos/:id', () => {
+    afterEach(async () => {
+        await TodoTest.delete();
+    });
+
+    it('should return 404 if todo not found', async () => {
+        const response = await supertest(web)
+            .get('/api/todos/9999');
+
+        logger.debug(response.body);
+        expect(response.status).toBe(404);
+        expect(response.body.errors).toBe('Todo not found');
+    });
+
+    it('should reject if id is not a valid number', async () => {
+        const response = await supertest(web)
+            .get('/api/todos/abc');
+
+        logger.debug(response.body);
+        expect(response.status).toBe(400);
+        expect(response.body.errors).toBeDefined();
+    });
+
+    it('should return todo if found', async () => {
+        const createResponse = await supertest(web)
+            .post('/api/todos')
+            .send({
+                title: 'test',
+                description: 'test',
+                status: false,
+            });
+
+        const todoId = createResponse.body.data.id;
+        const response = await supertest(web)
+            .get('/api/todos/' + todoId);
+
+        logger.debug(response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.data).toBeDefined();
+        expect(response.body.data.id).toBe(todoId);
+        expect(response.body.data.title).toBe('test');
+        expect(response.body.data.description).toBe('test');
+        expect(response.body.data.status).toBe(false);
+    });
+});
