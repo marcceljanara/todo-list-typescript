@@ -13,4 +13,9 @@ export class TodoService {
 
         return toTodoResponse(todo);
     }
+
+    static async getAll(): Promise<TodoResponse[]> {
+        const todos = await prismaClient.todo.findMany();
+        return todos.map(toTodoResponse);
+    }
 }
