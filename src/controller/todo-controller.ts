@@ -14,4 +14,14 @@ export class TodoController {
             next(error);
         }
     }
+    static async getAll(req: Request, res: Response, next: NextFunction) {
+        try {
+            const response = await TodoService.getAll();
+            return res.status(200).json({
+                data: response,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
