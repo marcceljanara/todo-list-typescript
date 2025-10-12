@@ -36,3 +36,47 @@ describe('POST /api/todos', () => {
             expect(response.body.data.status).toBe(false);
     });
 });
+
+describe('GET /api/todos', () => {
+    afterEach(async () => {
+        await TodoTest.delete();
+    })
+
+    it('should return empty list if no todo', async () => {
+        const response = await supertest(web)
+            .get('/api/todos');
+
+        logger.debug(response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.data).toBeDefined();
+        expect(Array.isArray(response.body.data)).toBe(true);
+        expect(response.body.data.length).toBe(0);
+    })
+
+    it('should return list of todos', async () => {
+        await supertest(web)
+            .post('/api/todos')
+            .send({
+                title: 'test1',
+                description: 'test1',
+                status: false,
+            });
+        
+        await supertest(web)
+            .post('/api/todos')
+            .send({
+                title: 'test2',
+                description: 'test2',
+                status: true,
+            });
+
+        const response = await supertest(web)
+            .get('/api/todos');
+
+        logger.debug(response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.data).toBeDefined();
+        expect(Array.isArray(response.body.data)).toBe(true);
+        expect(response.body.data.length).toBe(2);
+    })
+});
