@@ -21,10 +21,10 @@ export class TodoService {
     }
 
     static async getById(request: GetTodoRequest): Promise<TodoResponse> {
-        const getRequest = Validation.validate(TodoValidation.GET, request )
+        const getRequest = Validation.validate(TodoValidation.GET, request ) as GetTodoRequest;
         const todo = await prismaClient.todo.findFirst({
             where: {
-                id: request.id,
+                id: getRequest.id,
             }
         })
 

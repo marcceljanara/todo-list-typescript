@@ -10,4 +10,10 @@ export class TodoValidation {
     static readonly GET: ZodType = z.object({
         id: z.number().min(1).positive(),
      });
+
+     static readonly UPDATE: ZodType = z.object({
+        title: z.string().min(1).max(100).optional(),
+        description: z.string().optional(),
+        status: z.boolean().optional(),
+     });
 }
