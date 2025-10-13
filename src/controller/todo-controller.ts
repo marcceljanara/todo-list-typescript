@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { CreateTodoRequest, GetTodoRequest } from "../model/todo-model";
+import { CreateTodoRequest, GetTodoRequest, UpdateTodoRequest } from "../model/todo-model";
 import { TodoService } from "../service/todo-service";
 
 export class TodoController {
@@ -31,6 +31,19 @@ export class TodoController {
                 id: Number(req.params.id),
             };
             const response = await TodoService.getById(request);
+            return res.status(200).json({
+                data: response,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    static async update(req: Request, res: Response, next: NextFunction) {
+        try {
+            const request: UpdateTodoRequest = req.body as UpdateTodoRequest;
+            request.id = Number(req.params.id);
+            const response = await TodoService.update(request);
             return res.status(200).json({
                 data: response,
             });

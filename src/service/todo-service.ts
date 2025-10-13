@@ -1,6 +1,6 @@
 import { prismaClient } from "../application/database";
 import { ResponseError } from "../error/response-error";
-import { CreateTodoRequest, GetTodoRequest, TodoResponse, toTodoResponse } from "../model/todo-model";
+import { CreateTodoRequest, GetTodoRequest, TodoResponse, toTodoResponse, UpdateTodoRequest } from "../model/todo-model";
 import { TodoValidation } from "../validation/todo-validation";
 import { Validation } from "../validation/validation";
 
@@ -31,6 +31,19 @@ export class TodoService {
         if (!todo) {
             throw new ResponseError(404, 'Todo not found');
         }
+
+        return toTodoResponse(todo);
+    }
+
+    static async update(request: UpdateTodoRequest ): Promise<TodoResponse> {
+        const updateRequest = Validation.validate(TodoValidation.UPDATE, request) as UpdateTodoRequest;
+        await this.getById(request); // check if todo exists
+        const todo = await prismaClient.todo.update({
+            where: {
+                id: request.id
+            },
+            data: updateRequest,
+        });
 
         return toTodoResponse(todo);
     }

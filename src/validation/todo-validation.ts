@@ -12,7 +12,8 @@ export class TodoValidation {
      });
 
      static readonly UPDATE: ZodType = z.object({
-        title: z.string().min(1).max(100).optional(),
+        id: z.number().positive(),
+        title: z.string().min(1).max(100),
         description: z.string().optional(),
         status: z.boolean().optional(),
      });

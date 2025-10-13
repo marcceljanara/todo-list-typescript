@@ -16,6 +16,7 @@ export type CreateTodoRequest = {
 }
 
 export type UpdateTodoRequest = {
+    id: number,
     title?: string,
     description?: string | null,
     status?: boolean, 
