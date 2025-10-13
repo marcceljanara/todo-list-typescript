@@ -209,3 +209,47 @@ describe('PUT /api/todos/:id', () => {
         
     })
 });
+
+describe('DELETE /api/todos/:id', () => {
+    afterEach(async () => {
+        await TodoTest.delete();
+    });
+
+    it('should return 404 if todo not found', async () => {
+        const response = await supertest(web)
+            .delete('/api/todos/9999');
+
+        logger.debug(response.body);
+        expect(response.status).toBe(404);
+        expect(response.body.errors).toBeDefined();
+    });
+
+    it('should reject if id is not a valid number', async () => {
+        const response = await supertest(web)
+            .delete('/api/todos/abc');
+
+        logger.debug(response.body);
+        expect(response.status).toBe(400);
+        expect(response.body.errors).toBeDefined();
+    });
+
+        it('should delete todo if request is valid', async () => {
+        const createResponse = await supertest(web)
+            .post('/api/todos')
+            .send({
+                title: 'test',
+                description: 'test',
+                status: false,
+            });
+
+        const todoId = createResponse.body.data.id;
+        const response = await supertest(web)
+            .delete('/api/todos/'+ todoId);
+        
+        logger.debug(response.body);
+        console.log(response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.data).toBe('OK');
+        
+    })
+});

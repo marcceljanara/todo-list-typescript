@@ -6,3 +6,4 @@ publicRouter.post('/api/todos', TodoController.create);
 publicRouter.get('/api/todos', TodoController.getAll);
 publicRouter.get('/api/todos/:id', TodoController.getById);
 publicRouter.put('/api/todos/:id', TodoController.update);
+publicRouter.delete('/api/todos/:id', TodoController.delete);

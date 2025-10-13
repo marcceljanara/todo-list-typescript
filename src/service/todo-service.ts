@@ -47,4 +47,16 @@ export class TodoService {
 
         return toTodoResponse(todo);
     }
+
+    static async delete(request: GetTodoRequest): Promise<TodoResponse> {
+        await this.getById(request); //check if todo exists
+        const todo = await prismaClient.todo.delete({
+            where: {
+                id: request.id,
+            }
+        });
+
+        return toTodoResponse(todo);
+
+    }
 }

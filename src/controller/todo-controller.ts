@@ -7,7 +7,7 @@ export class TodoController {
         try {
             const request: CreateTodoRequest = req.body as CreateTodoRequest;
             const response = await TodoService.create(request);
-            return res.status(201).json({
+            res.status(201).json({
                 data: response,
             });
         } catch (error) {
@@ -17,7 +17,7 @@ export class TodoController {
     static async getAll(req: Request, res: Response, next: NextFunction) {
         try {
             const response = await TodoService.getAll();
-            return res.status(200).json({
+            res.status(200).json({
                 data: response,
             });
         } catch (error) {
@@ -31,7 +31,7 @@ export class TodoController {
                 id: Number(req.params.id),
             };
             const response = await TodoService.getById(request);
-            return res.status(200).json({
+            res.status(200).json({
                 data: response,
             });
         } catch (error) {
@@ -44,9 +44,24 @@ export class TodoController {
             const request: UpdateTodoRequest = req.body as UpdateTodoRequest;
             request.id = Number(req.params.id);
             const response = await TodoService.update(request);
-            return res.status(200).json({
+            res.status(200).json({
                 data: response,
             });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    static async delete(req: Request, res: Response, next: NextFunction) {
+        try {
+            const request: GetTodoRequest = {
+                id: Number(req.params.id),
+            };
+            const response = await TodoService.delete(request);
+            res.status(200).json({
+                data: 'OK',
+            });
+            
         } catch (error) {
             next(error);
         }
