@@ -26,6 +26,12 @@ export type GetTodoRequest = {
     id: number,
 }
 
+export type FilterTodoRequest = {
+    status?: boolean,
+    page: number,
+    size: number,
+}
+
 export function toTodoResponse(todo: Todo): TodoResponse {
     return {
         id: todo.id,

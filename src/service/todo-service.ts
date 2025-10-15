@@ -1,6 +1,7 @@
 import { prismaClient } from "../application/database";
 import { ResponseError } from "../error/response-error";
-import { CreateTodoRequest, GetTodoRequest, TodoResponse, toTodoResponse, UpdateTodoRequest } from "../model/todo-model";
+import { Pageable } from "../model/page";
+import { CreateTodoRequest, FilterTodoRequest, GetTodoRequest, TodoResponse, toTodoResponse, UpdateTodoRequest } from "../model/todo-model";
 import { TodoValidation } from "../validation/todo-validation";
 import { Validation } from "../validation/validation";
 
@@ -15,9 +16,34 @@ export class TodoService {
         return toTodoResponse(todo);
     }
 
-    static async getAll(): Promise<TodoResponse[]> {
-        const todos = await prismaClient.todo.findMany();
-        return todos.map(toTodoResponse);
+    static async getAll(request: FilterTodoRequest): Promise<Pageable<TodoResponse>> {
+        const filterRequest = Validation.validate(TodoValidation.FILTER, request) as FilterTodoRequest;
+        const skip = (filterRequest.page - 1) * filterRequest.size;
+        
+
+        const todos = await prismaClient.todo.findMany({
+            where: {
+                status: filterRequest.status
+            },
+            take: filterRequest.size,
+            skip: skip
+        });
+
+        const total = await prismaClient.todo.count({
+            where: {
+                status: filterRequest.status
+            }
+        });
+
+        return {
+            data: todos.map(toTodoResponse),
+            paging: {
+                size: filterRequest.size,
+                total_page: Math.ceil(total / filterRequest.size),
+                current_page: filterRequest.page,
+            }
+        }
+        
     }
 
     static async getById(request: GetTodoRequest): Promise<TodoResponse> {
